@@ -116,8 +116,8 @@ export const sendVerifyMail = async (name, email, user_id) => {
       secure: false,
       requireTLS: true,
       auth: {
-        user: config.emailUser,
-        pass: config.emailPassword
+        user: process.env.EMAILUSER,
+        pass: process.env.PASSWORD
       }
     });
 

@@ -22,9 +22,18 @@ import { markMessageAsRead } from './Controllers/MessageController.js';
 
 
 
-
+dotenv.config();
 const app = express();
 const server = http.createServer(app);
+
+
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["my-custom-header"],
+  credentials: true
+}));
+
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL,
@@ -84,33 +93,6 @@ io.on("connection", (socket) => {
     // console.log("Data: ", data);
     if (user) {
       io.to(user.socketId).emit("recieve-message", data);
-
-      //Mark the message as read in the databse
-  //     await markMessageAsRead(data.senderId, data.receiverId)
-
-  //     // Create a notification based on the interaction type
-  //     let notificationContent = '';
-  //     //let type = data.type;
-  //     switch (type) {
-  //       case 'like':
-  //         notificationContent = `${data.senderId} liked your post`;
-  //         break;
-  //       case 'comment':
-  //         notificationContent = `${data.senderId} commented on your post`;
-  //         break;
-  //       case 'follow':
-  //         notificationContent = `${data.senderId} started following you`;
-  //         break;
-  //       // Add more cases as needed for other interaction types
-  //     }
-    
-
-  //   if (notificationContent !== '') {
-  //     const values = await createNotification({  userId: receiverId, type, content: notificationContent, postId, senderId });
-  //     io.to(user.socketId).emit("recieve-notifications", values)
-  //     console.log("Notification values emitted:", values);
-  //   }
-  // }
     }
   });
 });
@@ -132,8 +114,7 @@ app.use(bodyParser.json({ limit: '30mb', extended: true })); // for parsing appl
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cors());
 
-
-dotenv.config()
+// Connect to MongoDB
 mongoose.connect(
   process.env.MONGO_DB,
   { useNewUrlParser: true, useUnifiedTopology: true }
@@ -144,30 +125,7 @@ mongoose.connect(
   });
 })
   .catch((error) => console.log(error));
-// const username = encodeURIComponent('harigupta');
-//const password = encodeURIComponent('36EjY9h8p2QuWHY8');
-//const database = encodeURIComponent('SocialMedia');
-// const Data = "mongodb+srv://harigupta:36EjY9h8p2QuWHY8@cluster0.ysdm4vi.mongodb.net/SocialMedia?retryWrites=true&w=majority&appName=Cluster0";
-// mongoose.connect(Data, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology:true,
-// }).then(() => {
-//        server.listen(process.env.PORT, () => {
-//         console.log('Server is running on port:', process.env.PORT);
-//          console.log('MongoDB connected');
-//        });
-//      }).catch((error)=>{
-//   console.log("No connection");
-//   console.log(error);
-// })    
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["my-custom-header"],
-  credentials: true
-}));
-
-  
+   
 
 // usage of routes
 app.use('/auth', AuthRoute)

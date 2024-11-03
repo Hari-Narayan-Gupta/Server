@@ -1,8 +1,8 @@
-const emailUser = "vishalrajsatsangi2003@gmail.com";
+const emailUser = process.env.EMAILUSER;
 
-const emailPassword = "dkun vadd whln isea";
+const emailPassword = process.env.PASSWORD;
 
-const secret = "MERN";
+const secret = process.env.JWT_KEY;
 
 export default {
     emailUser,

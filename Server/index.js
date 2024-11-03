@@ -28,9 +28,17 @@ const server = http.createServer(app);
 
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+    // Remove trailing slash from the incoming origin, if any, and check against allowedOrigins
+    const sanitizedOrigin = origin ? origin.replace(/\/$/, '') : '';
+    if (!origin || allowedOrigins.includes(sanitizedOrigin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["my-custom-header"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
